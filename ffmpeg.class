@@ -160,7 +160,7 @@ class FFmpeg
         dim outW
         outW = Round(CInt(m_slParam("Height")) * m_objStream.Dar / m_objStream.Sar )
         scale = "scale=" & outW & ":" & CInt(m_slParam("Height"))
-        scale = scale & ":" & "flags=lanczos"
+        scale = scale '& ":" & "flags=lanczos"
       end if
     end if
 

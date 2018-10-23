@@ -1,0 +1,71 @@
+<package>
+  <job id="Same">
+    <script language="vbscript" src="stream.class"/>
+    <script language="vbscript" src="ffmpeg.class"/>
+    <script language="vbscript" src="exec.vbs"/>
+    <script language="vbscript">
+      Private objFso, objWS, regEx, ret
+      Set objFso = CreateObject("Scripting.FileSystemObject")
+      Set objWS = WScript.CreateObject("WScript.Shell")
+      Set regEx = New RegExp
+      '引数チェック
+      dim args, arg
+      Set args = WScript.Arguments
+      If Args.Unnamed.Count < 1 Then
+        'help
+        WScript.Echo "No video files were specified!", VbCrLf, VbCrLf, _
+        "Options--", VbCrLf, _
+        "/Test:",vbTab,"Show encoding command only.", VbCrLf, _
+        "/Height:[value]",vbTab,"Resize as height(as is)", VbCrLf, _
+        "/Gop:[value]",vbTab,"gop size (auto)", VbCrLf, _
+        "/Tune:[string]",vbTab,"tune param (animation)", VbCrLf, _
+        "/Preset:[string]",vbTab,"preset param (slow)", VbCrLf, _
+        "/Crf:[value]",vbTab,"crf value (a * log(width*height) + b)", VbCrLf, _
+        "/A:[value]",vbTab,"param a (12.85097209)", VbCrLf, _
+        "/B:[value]",vbTab,"param b (-55.17605647)", VbCrLf, _
+        "/Fps:[string or value]",vbTab,"fps value or string (same as stream)", VbCrLf, _
+        "/Crop:[string]",vbTab,"43 to 4:3, 43+ to bit wider(none)", VbCrLf, _
+        "Example",VbCrLf,objFso.getFileName(WScript.ScriptFullName), _
+        " /Height:720 /Crop:43 /Fps:24000/1001"
+        Set objFso = Nothing
+        set objWS = Nothing
+        WScript.Quit
+      End If
+
+      '引数処理
+      For Each arg In args.Unnamed
+        If objFso.FileExists(arg) Then
+          ret = mainwork(arg)  'ファイル処理へ
+        Else
+          objWS.Popup arg & ": file not found.", 1, "Warning", 48
+          ret = 1
+        End If
+        '中断確認
+        if ret <> 0 then
+          ret = objWS.Popup("中止しますか？", 5, "Warning", 4 + 16)
+          if ret = 6 then Exit For
+        end if
+      Next
+
+      set objFso=Nothing
+      set objSLffParams=Nothing
+      objWS.Popup "END", 1
+      WScript.Quit
+      '終了
+
+      function mainwork(filepath)
+        dim objStream, objFFmpeg, ret
+        Set objFFmpeg = New FFmpeg
+        objFFmpeg.SetParams args.named
+
+        'パラメータ上書き
+        'objFFmpeg.SetParam("Test") = true
+        
+        objFFmpeg.FilePath = filepath '入力ファイルの指定
+
+        ret = objFFmpeg.DoFFcmd 'encoding
+        mainwork = ret
+      end function
+    </script>
+  </job>
+</package>

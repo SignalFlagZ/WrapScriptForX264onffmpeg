@@ -1,0 +1,225 @@
+Option Explicit
+
+class FFmpeg
+  Private m_slParam, m_filePath
+  private objFso, regEx, ret
+  private m_objStream
+  private m_driveName, m_baseName, m_parentName, m_extName, m_splitPath, m_scriptFolder
+
+  Private Sub Class_Initialize
+    Set m_slParam = CreateObject("System.Collections.SortedList")
+    Set objFso = CreateObject("Scripting.FileSystemObject")
+    Set regEx = New RegExp
+    m_scriptFolder = objFso.getParentFolderName(WScript.ScriptFullName)
+    Set objWS = WScript.CreateObject("WScript.Shell")
+
+    'defaults encoding parameter 
+    m_slParam.Add "Test", "false"
+    m_slParam.Add "Height", null
+    m_slParam.Add "Gop", null
+    m_slParam.Add "Crf", null
+    m_slParam.Add "Tune", "animation"
+    m_slParam.Add "Preset", "slow"
+    m_slParam.Add "A", "12.85097209"
+    m_slParam.Add "B", "-55.17605647"
+    m_slParam.Add "Ext", "mkv"
+    '
+    m_slParam.Add "Fps", null
+    m_slParam.Add "Crop", null
+  end sub
+  Private Sub class_terminate
+    m_slParam.Clear
+    set objFso = Nothing
+  End Sub
+
+  'メディアファイルの指定
+  Public Property Let FilePath(path)
+    If objFso.FileExists(path) Then
+      m_filePath = path
+      m_driveName = objFso.GetDriveName(m_filePath)
+      m_parentName = objFso.GetParentFolderName(m_filePath)
+      m_baseName = objFso.GetBaseName(m_filePath)
+      m_extName = objFso.GetExtensionName(m_filePath)
+      'ソースのストリーム情報を取得
+      Set m_objStream = New VideoStream
+      m_objStream.FilePath = m_filePath
+    Else
+      objWS.Popup path & ": file not found.", 2, "Warning", 48
+    End If  
+  end Property
+
+  Public Property Get FilePath()
+    FilePath = m_filePath
+  end Property
+
+  'パラメータを返す
+  Public Property Get GetParam(key)
+    If m_slParam.ContainsKey(key) Then
+      GetParam = m_slParam(key)
+    else
+      GetParam = null
+    End If
+  end Property
+  
+  'キーでパラメータを設定する
+  Public Property Let SetParam(key, value)
+    If m_slParam.ContainsKey(key) Then
+      m_slParam.SetByIndex m_slParam.IndexOfKey(key), value
+    else
+      m_slParam.Add key, value
+    End If
+  end Property
+
+  '出力ファイル名を決定する
+  Private Property Get GetOutFile()
+    dim outfile
+    outfile = objFso.buildpath(m_parentName , m_baseName & "." & m_slParam("Ext"))
+    if objFso.FileExists(outfile) Then
+      if not objFso.FolderExists(objFso.buildpath(m_parentName, m_slParam("Ext"))) and not m_slParam("Test") Then
+        objFso.CreateFolder(objFso.buildpath(m_parentName, m_slParam("Ext")))
+      end if
+      outfile = objFso.buildpath(m_parentName ,m_slParam("Ext"))
+      outfile = objFso.buildpath(outfile,m_baseName & "." & m_slParam("Ext"))
+    end If
+    GetOutFile = outfile
+  End Property
+
+  'エンコードパラメータ取得
+  Public Sub SetParams(args)
+    dim i, ret
+    For i =0 To m_slParam.Count-1
+      If args.Exists(m_slParam.GetKey(i)) Then
+        ret = args(m_slParam.GetKey(i))
+        if ret = "" then ret=null
+        m_slParam.SetByIndex i, ret
+        'Wscript.echo m_slParam.GetKey(i), ", ",  m_slParam.GetByIndex(i)
+      end if
+    next
+  End Sub
+
+  Private Function GetFFGop()
+    if Not IsNull(m_slParam("Gop")) then
+      GetFFGop = Join(Array("-g ", m_slParam("Gop")))
+    else
+      GetFFGop = ""
+    end if
+  End Function
+
+  Private Function GetFFCrf()
+    if IsNull(m_slParam("Crf")) then
+      '解像度からCrf値を設定
+      
+      'cropがある場合
+      dim cropWscale
+      cropWscale = 1
+      if not IsNull(m_slParam("Crop")) Then
+        Select Case m_slParam("Crop")
+        Case "43" '4:3
+          'crop=in_w/4*3*1.0:in_h
+          cropWscale = 3/4
+        Case "43+" '4+:3
+          'crop=in_w/4*3*1.1:in_h
+          cropWscale = 3/4*1.1
+        end Select
+      end if
+
+      dim outW, outH
+      outW = m_objStream.Width * cropWscale
+      outH = m_objStream.Height
+      if not IsNull(m_slParam("Height")) Then
+        outH =CInt(m_slParam("Height"))
+        outW = outH * m_objStream.Dar / m_objStream.Sar
+      end if
+      GetFFCrf = Join(Array("-crf ", Round ( m_slParam("A")*log(outW * outH)/log(10)+m_slParam("B"), 1)))
+    else 
+      GetFFCrf = Join(Array("-crf", CSng(m_slParam("Crf"))))
+    end if
+  end Function
+
+  Private Function GetTunePreset()
+    if Not IsNull(m_slParam("Tune")) then
+      GetTunePreset = Join(Array(GetTunePreset,"-tune", m_slParam("Tune")))
+    else
+      GetTunePreset = ""
+    end if
+    if Not IsNull(m_slParam("Preset")) then
+      GetTunePreset = Join(Array(GetTunePreset,"-preset", m_slParam("Preset")))
+    else
+      GetTunePreset = GetTunePreset
+    end if
+  End Function
+
+  Private Function GetFFVf()
+    'video filter
+    dim ret
+    dim scale
+    scale = ""
+    'scale設定
+    if not IsNull(m_slParam("Height")) Then
+      if CInt(m_slParam("Height")) <> m_objStream.Height then
+        dim outW
+        outW = Round(CInt(m_slParam("Height")) * m_objStream.Dar / m_objStream.Sar )
+        scale = "scale=" & outW & ":" & CInt(m_slParam("Height"))
+        scale = scale & ":" & "flags=lanczos"
+      end if
+    end if
+
+    dim deinterlace
+    deinterlace = ""
+    if (not m_objStream.IsProgressive) and (m_objStream.Fps <= 30)  then
+      deinterlace = "dejudder,fps=30000/1001,fieldmatch,yadif=0:-1:1,decimate"
+    end if
+
+    dim fps
+    if not IsNull(m_slParam("Fps")) Then
+      fps = "fps=" & m_slParam("Fps")
+    else
+      fps = "fps=" & m_objStream.FpsString
+    end if
+    
+    dim crop
+    crop =""
+    if not IsNull(m_slParam("Crop")) Then
+      Select Case m_slParam("Crop")
+      Case "43" '4:3
+        crop = "crop=in_w/4*3*1.0:in_h"
+      Case "43+" '4+:3
+        crop = "crop=in_w/4*3*1.1:in_h"
+      end Select
+    end if
+
+    ret = Array(crop, deinterlace, scale, fps)
+    ret = Filter(ret, "=",true, vbTextCompare)
+    ret = Join(ret, ",")
+    if ret <> "" then
+      ret = "-filter_complex """ & ret & """"
+    end if
+    GetFFVf = ret
+  end Function
+
+  Public Function GetFFcmd()
+    dim cmd
+    cmd = objFso.BuildPath( m_scriptFolder, "ffmpeg.exe")
+    cmd = Join(Array( cmd, "-i", """" & m_filePath & """"))
+    cmd = Join(Array( cmd, "-ignore_unknown", "-dn", "-map 0", "-c copy"))
+    cmd = Join(Array( cmd, "-c:v libx264", "-pix_fmt yuv420p"))
+    cmd = Join(Array( cmd, GetFFVf(), GetFFCrf(), GetFFGop(), GetTunePreset()))
+    cmd = Join(Array( cmd, "-movflags +faststart"))
+    cmd = Join(Array(cmd, "-y", """" & GetOutFile() & """"))
+    GetFFcmd = cmd
+  End Function
+
+  Public Function DoFFcmd()
+    dim cmd, ret
+    cmd = GetFFcmd()
+    if not m_slParam("Test") Then
+      'objWS.Popup cmd, 1, "Encording Start", 64
+      cmd = Join(Array("cmd.exe /c", "start", """" & m_baseName & """", "/BELOWNORMAL /B /W",cmd))
+      ret = runcmd(cmd)
+      DoFFcmd = ret
+    else
+      Wscript.echo(cmd)
+      DoFFcmd = 0
+    end if
+  End Function
+end class

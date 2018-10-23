@@ -24,7 +24,7 @@ ffmpegでx264エンコードするためのVBScriptです。
 ### options
 | option | argument | description | default |
 |:---:|:---|:---|:---|
-|/Test: |true or false |ffmpegのコマンドラインを表示します。エンコードは実行しません。 |false |
+|/Test: |`true` or `false` |ffmpegのコマンドラインを表示します。エンコードは実行しません。 |false |
 |/Heigh: |数値 |出力の縦解像度 |入力と同じ |
 |/Gop: |数値 |gop長 |指定なし |
 |/Crf: |数値 |crf値 |出力解像度より決定 |

@@ -1,5 +1,5 @@
 <package>
-  <job id="Same">
+  <job id="default">
     <script language="vbscript" src="stream.class"/>
     <script language="vbscript" src="ffmpeg.class"/>
     <script language="vbscript" src="exec.vbs"/>

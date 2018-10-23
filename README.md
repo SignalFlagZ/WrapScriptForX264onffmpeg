@@ -3,7 +3,7 @@ This is VBScripts for encoding with x264 of ffmpeg.
 ffmpegでx264エンコードするためのVBScriptです。  
 
 ## 特徴
-`main.wsf`にファイルをD&Dするとエンコードを開始します。batファイルと違いファイル名に`@ & % ...`などがあっても問題が生じません。  
+`main.wsf`にファイルをD&Dするとエンコードを開始します。batファイルと違いファイル名に`! & % ...`などがあっても問題が生じません。  
 
 エンコーダーは`libx264`を使います。30fps以下のソース映像を24fpsへエンコードする事を主目的にしています。インターレースはプログレッシブに変換されます。detelecineも行います。
 出力映像の解像度から自動的に`crf`値を決定します。
@@ -19,8 +19,8 @@ ffmpegでx264エンコードするためのVBScriptです。
 ~~~
     main.wsf arg1 [arg2 arg3 ...] [/Test] [/Height:value] [/Gop:value] [/Crf:value] [/Tune:string] [/Preset:string] [/A:value] [/B:value] [/Ext:string] [/Fps:string] [/Crop:{43, 43+}]
 ~~~
+スクリプトと同じフォルダに`ffmpeg`と`ffprobe`を置いてください。
 `main.wsf`にファイルをD&Dします。
-`main.wsf`のショートカットを作成し、リンク先を`cscript.exe main.wsf /Height:720`等としておくとオプション指定ができ便利です。
 ### options
 | option | argument | description | default |
 |:---:|:---|:---|:---|
@@ -35,3 +35,4 @@ ffmpegでx264エンコードするためのVBScriptです。
 |/Ext: |文字列 |出力ファイルの拡張子　コンテナを決める |`mkv` |
 |/Fps: |文字列 or 数値 例:`24`,`24000/1001`|fps値 `24`,`24000/1001` |入力と同じ |
 |/Crop: |`43` or `43+` |4:3へクロップ `43+`はやや幅広  |クロップしない |
+`main.wsf`のショートカットを作成し、リンク先を`cscript.exe main.wsf /Height:720`等としておくと便利です。

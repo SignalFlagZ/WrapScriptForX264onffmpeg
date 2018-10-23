@@ -54,7 +54,7 @@ class VideoStream
   end Property
 
   Public Property Get Fps()
-    Fps = round(m_fps,2)
+    Fps = round(m_fps,3)
   end Property
 
   Public Property Get SarString()

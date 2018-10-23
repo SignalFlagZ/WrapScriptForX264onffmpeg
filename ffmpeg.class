@@ -130,7 +130,7 @@ class FFmpeg
         outH =CInt(m_slParam("Height"))
         outW = outH * m_objStream.Dar / m_objStream.Sar
       end if
-      GetFFCrf = Join(Array("-crf ", Round ( m_slParam("A")*log(outW * outH)/log(10)+m_slParam("B"), 1)))
+      GetFFCrf = Join(Array("-crf ", Round ( m_slParam("A")*log(outW * outH)/log(10)+m_slParam("B"), 2)))
     else 
       GetFFCrf = Join(Array("-crf", CSng(m_slParam("Crf"))))
     end if

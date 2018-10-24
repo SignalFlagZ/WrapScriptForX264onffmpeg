@@ -1,4 +1,4 @@
-# WrapScriptForX264onffmpeg
+# WrapScriptforFFmpegX264
 This is VBScripts for encoding with x264 of ffmpeg.  
 ffmpegでx264エンコードするためのVBScriptです。  
 

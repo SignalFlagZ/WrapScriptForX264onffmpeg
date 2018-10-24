@@ -19,7 +19,7 @@ ffmpegでx264エンコードするためのVBScriptです。
 
 ## 使い方
 ~~~
-    main.wsf arg1 [arg2 arg3 ...] [/Test] [/Height:value] [/Gop:value] [/Crf:value] [/Tune:string] [/Preset:string] [/A:value] [/B:value] [/Ext:string] [/Fps:string] [/Crop:{43, 43+}]
+    main.wsf [/Test:] [/Height:value] [/Gop:value] [/Crf:value] [/Tune:string] [/Preset:string] [/A:value] [/B:value] [/Ext:string] [/Fps:string] [/Crop:{43, 43+}] [/Detelecine:] [/Bsfa:string] arg1 [arg2 arg3 ...] 
 ~~~
 スクリプトと同じフォルダに`ffmpeg`と`ffprobe`を置いてください。
 `main.wsf`にファイルをD&Dします。`main.wsf`のショートカットを作成し、リンク先を`cscript.exe main.wsf /Height:720`等としておくと便利です。
@@ -29,7 +29,7 @@ ffmpegでx264エンコードするためのVBScriptです。
 | option | argument | description | default |
 |:---:|:---|:---|:---|
 |/Test: |`true` or `false` |ffmpegのコマンドラインを表示します。エンコードは実行しません。 |false |
-|/Heigh: |数値 |出力の縦解像度 |入力と同じ |
+|/Heigh: |なし |出力の縦解像度 |入力と同じ |
 |/Gop: |数値 |gop長 |指定なし |
 |/Crf: |数値 |crf値 |出力解像度より決定 |
 |/Tune: |文字列 |tuneパラメータ |`animation` |
@@ -39,5 +39,5 @@ ffmpegでx264エンコードするためのVBScriptです。
 |/Ext: |文字列 |出力ファイルの拡張子　コンテナを決める |`mkv` |
 |/Fps: |文字列 or 数値 例:`24`,`24000/1001`|fps値 `24`,`24000/1001` |入力と同じ |
 |/Crop: |`43` or `43+` |4:3へクロップ `43+`はやや幅広  |クロップしない |
-|/Detelecine: |`true` or `false` |テレシネを解除する  |インターレースの時は解除 |
+|/Detelecine |なし |テレシネを解除する  |インターレースの時は解除 |
 |/Bsfa: |文字列 |`-bsf:a`に追加 例:`aac_adtstoasc` |指定なし |

@@ -88,7 +88,7 @@ class VideoStream
       'streamèÓïÒéÊìæ
       dim ffCmd, strCmd, scriptFolder
       scriptFolder = objFso.getParentFolderName(WScript.ScriptFullName)
-      ffCmd = "ffprobe -v error -select_streams v:0 -show_entries stream=width,height,sample_aspect_ratio,display_aspect_ratio,avg_frame_rate,field_order """ & filePath & """"
+      ffCmd = "ffprobe -v error -select_streams v:0 -show_streams """ & filePath & """"
       strCmd = scriptFolder & "\" & ffCmd
       stream = execcmd( strCmd)
       
@@ -124,6 +124,11 @@ class VideoStream
       regEx.Pattern = "field_order=(\w+)"
       set ret = regEx.Execute(stream)
       m_strFO = ret(0).SubMatches(0)
+
+      ffCmd = "ffprobe -v error -select_streams a:0 -show_entries stream=width,height,sample_aspect_ratio,display_aspect_ratio,avg_frame_rate,field_order """ & filePath & """"
+      strCmd = scriptFolder & "\" & ffCmd
+      stream = execcmd( strCmd)
+
     end if
   end sub
 end class

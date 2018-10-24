@@ -26,6 +26,7 @@ class FFmpeg
     m_slParam.Add "Fps", null
     m_slParam.Add "Crop", null
     m_slParam.Add "Detelecine", "false"
+    m_slParam.Add "Bsfa", null
   end sub
   Private Sub class_terminate
     m_slParam.Clear
@@ -117,6 +118,13 @@ class FFmpeg
       end if
     next
   End Sub
+  Private Function GetFFBsfa()
+    if Not IsNull(m_slParam("Bsfa")) then
+      GetFFBsfa = Join(Array("-bsf:a ", m_slParam("Bsfa")))
+    else
+      GetFFBsfa = ""
+    end if
+  End Function
 
   Private Function GetFFGop()
     if Not IsNull(m_slParam("Gop")) then
@@ -230,6 +238,7 @@ class FFmpeg
     cmd = objFso.BuildPath( m_scriptFolder, "ffmpeg.exe")
     cmd = Join(Array( cmd, "-i", """" & m_filePath & """"))
     cmd = Join(Array( cmd, "-ignore_unknown", "-dn", "-map 0", "-c copy"))
+    cmd = Join(Array( cmd, GetFFBsfa()))
     cmd = Join(Array( cmd, "-c:v libx264", "-pix_fmt yuv420p"))
     cmd = Join(Array( cmd, GetFFVf(), GetFFCrf(), GetFFGop(), GetFFTunePreset()))
     cmd = Join(Array( cmd, "-i_qfactor 0.71","-weightb 1"))

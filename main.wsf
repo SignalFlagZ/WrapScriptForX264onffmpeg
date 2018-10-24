@@ -26,6 +26,7 @@
         "/Fps:[string or value]",vbTab,"fps value or string (same as stream)", VbCrLf, _
         "/Crop:[string]",vbTab,"43 to 4:3, 43+ to bit wider(none)", VbCrLf, _
         "/Detelecine:",vbTab,"detelecine", VbCrLf, _
+        "/Bsfa:",vbTab,"bitstream filter for audio", VbCrLf, _
         "Example",VbCrLf,objFso.getFileName(WScript.ScriptFullName), _
         " /Height:720 /Crop:43 /Fps:24000/1001"
         Set objFso = Nothing

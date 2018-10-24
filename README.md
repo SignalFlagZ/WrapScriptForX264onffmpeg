@@ -40,4 +40,4 @@ ffmpegでx264エンコードするためのVBScriptです。
 |/Fps: |文字列 or 数値 |fps値指定 |入力と同じ |`/Fps:30` `/Fps:24000/1001` |
 |/Crop: |`43` or `43+` |4:3にクロップ `43+`はやや幅広  |クロップしない |`/Crop:43` `/Crop:43+` |
 |/Detelecine |なし |テレシネ解除を強制する  |インターレース時は自動で解除 |`/Detelecine` |
-|/Bsfa: |文字列 |`-bsf:a`に追加 例:`aac_adtstoasc` |指定なし |`/Bsfa:aac_adtstoasc` |
+|/Bsfa: |文字列 |オーディオbitstream filter指定 例:`aac_adtstoasc` |指定なし |`/Bsfa:aac_adtstoasc` |

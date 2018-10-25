@@ -244,7 +244,7 @@ class FFmpeg
     cmd = Join(Array( cmd, GetFFVf(), GetFFCrf(), GetFFGop(), GetFFTunePreset()))
     cmd = Join(Array( cmd, "-i_qfactor 0.71","-weightb 1"))
     cmd = Join(Array( cmd, "-movflags +faststart"))
-    cmd = Join(Array(cmd, "-y", """" & GetOutFile() & """"))
+    cmd = Join(Array( cmd, "-y", """" & GetOutFile() & """"))
     GetFFcmd = cmd
   End Function
 

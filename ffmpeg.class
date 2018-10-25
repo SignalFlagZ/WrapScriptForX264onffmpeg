@@ -201,6 +201,7 @@ class FFmpeg
     end if
 
     dim detelecine
+    detelecine = ""
     if ((not m_objStream.IsProgressive) and (GetParamValue("Fps") < 30)) or _
          CBool(m_slParam("Detelecine")) then
       detelecine = "dejudder,fps=30000/1001,fieldmatch,yadif=0:-1:1,decimate"

@@ -22,3 +22,12 @@ Function execcmd(strCmd)
   set oExec = Nothing
   set objWshShell = Nothing
 End Function
+
+Function copytoclipboard(str)
+  dim cmd
+  'str = Replace(str, """", "\""", vbTextCompare)
+  str = Replace(str, "'", "\'", vbTextCompare)
+  str = Replace(str, "\", "\\", vbTextCompare)
+  cmd = "mshta ""javascript:Code(close(clipboardData.setData('text','" & str & "')));"""
+  runcmd(cmd)
+End Function

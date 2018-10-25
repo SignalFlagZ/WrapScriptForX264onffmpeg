@@ -256,6 +256,7 @@ class FFmpeg
       ret = runcmd(cmd)
       DoFFcmd = ret
     else
+      copytoclipboard cmd
       Wscript.echo(cmd)
       DoFFcmd = 0
     end if

@@ -2,7 +2,7 @@
 This is VBScripts for encoding with x264 of ffmpeg.  
 ffmpegでx264エンコードするためのVBScriptです。  
 
-## 特徴 :ok_woman:
+## 特徴
 `main.wsf`にファイルをD&Dするとエンコードを開始します。batファイルと違いファイル名に`! & % ...`などやUnicode文字があっても問題が生じません。 Unicode文字も使えます。 
 
 エンコーダーは`libx264`を使います。30fps以下のソース映像を24fpsへエンコードする事を主目的にしています。インターレースはプログレッシブに変換されます。detelecineも行います。
@@ -33,7 +33,7 @@ ffmpegでx264エンコードするためのVBScriptです。
 |/Heigh: |なし |高さでリサイズ |入力と同じ |`/Height:720` |
 |/Gop: |数値 |gop長指定 |指定なし |`/Gop:48` |
 |/Crf: |数値 |crf値指定 |出力解像度より決定 |`/Crf:26` |
-|/Tune: |文字列 |tuneパラメータ |なし |`/Tune:Film` |
+|/Tune: |文字列 |tuneパラメータ |指定なし |`/Tune:Film` |
 |/Preset: |文字列 |presetパラメータ |`medium` |`/Preset:slow` |
 |/A: |数値 |a値 |`12.85097209` |`/A:12.9` |
 |/B: |数値 |b値 |`-55.17605647` |`/B:-54` |

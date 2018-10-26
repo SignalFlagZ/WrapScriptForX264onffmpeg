@@ -204,7 +204,7 @@ class FFmpeg
     dim detelecine
     detelecine = ""
     if ((not m_objStream.IsProgressive) and (GetParamValue("Fps") < 30)) or _
-         HasValue(m_slParam("Detelecine")) then
+         IsValue(m_slParam("Detelecine")) then
       detelecine = "dejudder,fps=30000/1001,fieldmatch,yadif=0:-1:1,decimate"
     end if
 
@@ -240,7 +240,7 @@ class FFmpeg
     dim val,ret
     ret = true
     val = m_slParam(key)
-    if Not HasValue(val) Then HasParam = False : Exit Function
+    if Not IsValue(val) Then HasParam = False : Exit Function
     if val = "" then ret = False
     HasParam = ret
   End Function
@@ -250,7 +250,7 @@ class FFmpeg
     dim val, ret
     ret = True
     val = m_slParam("Test")
-    if Not HasValue(val) Then IsTest = False : Exit Function
+    if Not IsValue(val) Then IsTest = False : Exit Function
     if val = "false" then ret = False
     IsTest = ret
   End Function

@@ -32,12 +32,12 @@ Function copytoclipboard(str)
   runcmd(cmd)
 End Function
 
-Function HasValue(val)
+Function IsValue(val)
   dim ret
   ret = True
   if IsNull(val) then ret = False
   if IsObject(val) then ret = False
   if IsEmpty(val) then ret = False
-  HasValue = ret
+  IsValue = ret
 End Function
   

@@ -39,7 +39,7 @@ class FFmpeg
     For i =0 To m_slParam.Count-1
       If args.Exists(m_slParam.GetKey(i)) Then
         ret = args(m_slParam.GetKey(i))
-        if IsNull(ret) then ret = ""
+        if IsEmpty(ret) then ret = "" 'コロンの後に何も書かないとEmptyになる
         SetParam(m_slParam.GetKey(i)) = ret
         'Wscript.echo m_slParam.GetKey(i), ", ",  m_slParam.GetByIndex(i)
       end if
@@ -203,18 +203,10 @@ class FFmpeg
 
     dim detelecine
     detelecine = ""
-    if ((not m_objStream.IsProgressive) and (GetParamValue("Fps") < 30)) or _
-         HasValue(m_slParam("Detelecine")) then
+    if IsValue(m_slParam("Detelecine")) then
       detelecine = "dejudder,fps=30000/1001,fieldmatch,yadif=0:-1:1,decimate"
     end if
 
-    dim fps
-    if HasParam("Fps") Then
-      fps = "fps=" & m_slParam("Fps")
-    else
-      fps = "fps=" & m_objStream.FpsString
-    end if
-    
     dim crop
     crop =""
     if HasParam("Crop") Then
@@ -226,7 +218,7 @@ class FFmpeg
       end Select
     end if
 
-    ret = Array(crop, deinterlace, detelecine, scale, fps)
+    ret = Array(crop, deinterlace, detelecine, scale)
     ret = Filter(ret, "=",true, vbTextCompare)
     ret = Join(ret, ",")
     if ret <> "" then
@@ -235,24 +227,34 @@ class FFmpeg
     GetFFVf = ret
   end Function
 
+  Private Function GetFFFps()
+    dim fps
+    if HasParam("Fps") Then
+      fps = "-r " & m_slParam("Fps")
+    else
+      fps = ""
+    end if
+    GetFFFps = fps
+  End Function
+
   Private Function HasParam(key)
     'オプションにパラメータが書かれているか？
-    dim val
+    dim val,ret
+    ret = true
     val = m_slParam(key)
-    if Not HasValue(val) Then HasParam = False : Exit Function
-    if val = "" then HasParam = False : Exit Function
-    HasParam = True '何か書かれていれば True
+    if Not IsValue(val) Then HasParam = False : Exit Function
+    if val = "" then ret = False
+    HasParam = ret
   End Function
 
   Private Function IsTest()
     'Testパラメータのチェック
-    dim val
+    dim val, ret
+    ret = True
     val = m_slParam("Test")
-    if Not HasValue(val) Then IsTest = False : Exit Function
-    if val = "false" then IsTest = False : Exit Function
-    if val = "true" then IsTest = True :Exit Function
-    if val = "" then IsTest = True : Exit Function
-    IsTest = True
+    if Not IsValue(val) Then IsTest = False : Exit Function
+    if val = "false" then ret = False
+    IsTest = ret
   End Function
 
 
@@ -263,7 +265,7 @@ class FFmpeg
     cmd = Join(Array( cmd, "-ignore_unknown", "-dn", "-map 0", "-c copy"))
     cmd = Join(Array( cmd, GetFFBsfa()))
     cmd = Join(Array( cmd, "-c:v libx264", "-pix_fmt yuv420p"))
-    cmd = Join(Array( cmd, GetFFVf(), GetFFCrf(), GetFFGop(), GetFFTunePreset()))
+    cmd = Join(Array( cmd, GetFFVf(), GetFFFps(),GetFFCrf(), GetFFGop(), GetFFTunePreset()))
     'cmd = Join(Array( cmd, "-i_qfactor 0.71","-weightb 1"))
     cmd = Join(Array( cmd, "-movflags +faststart"))
     cmd = Join(Array( cmd, "-y", """" & GetOutFile() & """"))

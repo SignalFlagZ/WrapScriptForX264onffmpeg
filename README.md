@@ -3,7 +3,7 @@ This is VBScripts for encoding with x264 of ffmpeg.
 ffmpegでx264エンコードするためのVBScriptです。  
 
 ## 特徴
-`main.wsf`にファイルをD&Dするとエンコードを開始します。batファイルと違いファイル名に`! & % ...`などがあっても問題が生じません。  
+`main.wsf`にファイルをD&Dするとエンコードを開始します。batファイルと違いファイル名に`! & % ...`などやUnicode文字があっても問題が生じません。 Unicode文字も使えます。 
 
 エンコーダーは`libx264`を使います。30fps以下のソース映像を24fpsへエンコードする事を主目的にしています。インターレースはプログレッシブに変換されます。detelecineも行います。
 
@@ -18,6 +18,7 @@ ffmpegでx264エンコードするためのVBScriptです。
 音声は再エンコードせずそのままコピーします。
 
 ## 使い方
+[Blog Signal Flag Z](https://signal-flag-z.blogspot.com/2018/10/ffmpeg-libx264-VBScript.html)
 ~~~
     main.wsf [/Test:] [/Height:value] [/Gop:value] [/Crf:value] [/Tune:string] [/Preset:string] [/A:value] [/B:value] [/Ext:string] [/Fps:string] [/Crop:{43, 43+}] [/Detelecine:] [/Bsfa:string] arg1 [arg2 arg3 ...] 
 ~~~
@@ -32,8 +33,8 @@ ffmpegでx264エンコードするためのVBScriptです。
 |/Heigh: |なし |高さでリサイズ |入力と同じ |`/Height:720` |
 |/Gop: |数値 |gop長指定 |指定なし |`/Gop:48` |
 |/Crf: |数値 |crf値指定 |出力解像度より決定 |`/Crf:26` |
-|/Tune: |文字列 |tuneパラメータ |`animation` |`/Tune:Film` |
-|/Preset: |文字列 |presetパラメータ |`slow` |`/Preset:medium` |
+|/Tune: |文字列 |tuneパラメータ |指定なし |`/Tune:Film` |
+|/Preset: |文字列 |presetパラメータ |`medium` |`/Preset:slow` |
 |/A: |数値 |a値 |`12.85097209` |`/A:12.9` |
 |/B: |数値 |b値 |`-55.17605647` |`/B:-54` |
 |/Ext: |文字列 |出力ファイルの拡張子　コンテナを決める |`mkv` |`/Ext:mp4` |

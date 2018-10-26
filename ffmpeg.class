@@ -14,23 +14,36 @@ class FFmpeg
     Set objWS = WScript.CreateObject("WScript.Shell")
 
     'defaults encoding parameter 
-    m_slParam.Add "Test", "false"
+    m_slParam.Add "Test", null
     m_slParam.Add "Height", null
     m_slParam.Add "Gop", null
     m_slParam.Add "Crf", null
-    m_slParam.Add "Tune", "animation"
-    m_slParam.Add "Preset", "slow"
+    m_slParam.Add "Tune", null
+    m_slParam.Add "Preset", "medium"
     m_slParam.Add "A", "12.85097209"
     m_slParam.Add "B", "-55.17605647"
     m_slParam.Add "Ext", "mkv"
     m_slParam.Add "Fps", null
     m_slParam.Add "Crop", null
-    m_slParam.Add "Detelecine", "false"
+    m_slParam.Add "Detelecine", null
     m_slParam.Add "Bsfa", null
   end sub
   Private Sub class_terminate
     m_slParam.Clear
     set objFso = Nothing
+  End Sub
+    
+  'エンコードパラメータ設定
+  Public Sub SetParams(args)
+    dim i, ret
+    For i =0 To m_slParam.Count-1
+      If args.Exists(m_slParam.GetKey(i)) Then
+        ret = args(m_slParam.GetKey(i))
+        if IsNull(ret) then ret = ""
+        SetParam(m_slParam.GetKey(i)) = ret
+        'Wscript.echo m_slParam.GetKey(i), ", ",  m_slParam.GetByIndex(i)
+      end if
+    next
   End Sub
 
   'メディアファイルの指定
@@ -97,7 +110,7 @@ class FFmpeg
     dim outfile
     outfile = objFso.buildpath(m_parentName , m_baseName & "." & m_slParam("Ext"))
     if objFso.FileExists(outfile) Then
-      if not objFso.FolderExists(objFso.buildpath(m_parentName, m_slParam("Ext"))) and not m_slParam("Test") Then
+      if not objFso.FolderExists(objFso.buildpath(m_parentName, m_slParam("Ext"))) and not IsTest() Then
         objFso.CreateFolder(objFso.buildpath(m_parentName, m_slParam("Ext")))
       end if
       outfile = objFso.buildpath(m_parentName ,m_slParam("Ext"))
@@ -106,20 +119,8 @@ class FFmpeg
     GetOutFile = outfile
   End Property
 
-  'エンコードパラメータ設定
-  Public Sub SetParams(args)
-    dim i, ret
-    For i =0 To m_slParam.Count-1
-      If args.Exists(m_slParam.GetKey(i)) Then
-        ret = args(m_slParam.GetKey(i))
-        if ret = "" then ret = true
-        m_slParam.SetByIndex i, ret
-        'Wscript.echo m_slParam.GetKey(i), ", ",  m_slParam.GetByIndex(i)
-      end if
-    next
-  End Sub
   Private Function GetFFBsfa()
-    if Not IsNull(m_slParam("Bsfa")) then
+    if HasParam("Bsfa") then
       GetFFBsfa = Join(Array("-bsf:a ", m_slParam("Bsfa")))
     else
       GetFFBsfa = ""
@@ -127,7 +128,7 @@ class FFmpeg
   End Function
 
   Private Function GetFFGop()
-    if Not IsNull(m_slParam("Gop")) then
+    if HasParam("Gop") then
       GetFFGop = Join(Array("-g ", m_slParam("Gop")))
     else
       GetFFGop = ""
@@ -135,13 +136,13 @@ class FFmpeg
   End Function
 
   Private Function GetFFCrf()
-    if IsNull(m_slParam("Crf")) then
+    if Not HasParam("Crf") then
       '解像度からCrf値を設定
       
       'cropがある場合
       dim cropWscale
       cropWscale = 1
-      if not IsNull(m_slParam("Crop")) Then
+      if HasParam("Crop") Then
         Select Case m_slParam("Crop")
         Case "43" '4:3
           'crop=in_w/4*3*1.0:in_h
@@ -155,26 +156,26 @@ class FFmpeg
       dim outW, outH
       outW = m_objStream.Width * cropWscale
       outH = m_objStream.Height
-      if not IsNull(m_slParam("Height")) Then
+      if HasParam("Height") Then
         outH =CInt(m_slParam("Height"))
         outW = outH * m_objStream.Dar / m_objStream.Sar
       end if
       GetFFCrf = Join(Array("-crf ", Round ( m_slParam("A")*log(outW * outH)/log(10)+m_slParam("B"), 2)))
-    else 
+    else
       GetFFCrf = Join(Array("-crf", CSng(m_slParam("Crf"))))
     end if
   end Function
 
   Private Function GetFFTunePreset()
-    if Not IsNull(m_slParam("Tune")) then
+    if HasParam("Tune") then
       GetFFTunePreset = Join(Array("-tune", m_slParam("Tune")))
     else
       GetFFTunePreset = ""
     end if
-    if Not IsNull(m_slParam("Preset")) then
+    if HasParam("Preset") then
       GetFFTunePreset = Join(Array(GetFFTunePreset,"-preset", m_slParam("Preset")))
     else
-      GetFFTunePreset = GetTunePreset
+      GetFFTunePreset = GetFFTunePreset
     end if
   End Function
 
@@ -184,7 +185,7 @@ class FFmpeg
     dim scale
     scale = ""
     'scale設定
-    if not IsNull(m_slParam("Height")) Then
+    if HasParam("Height") Then
       if CInt(m_slParam("Height")) <> m_objStream.Height then
         dim outW
         outW = Round(CInt(m_slParam("Height")) * m_objStream.Dar / m_objStream.Sar )
@@ -203,12 +204,12 @@ class FFmpeg
     dim detelecine
     detelecine = ""
     if ((not m_objStream.IsProgressive) and (GetParamValue("Fps") < 30)) or _
-         CBool(m_slParam("Detelecine")) then
+         HasValue(m_slParam("Detelecine")) then
       detelecine = "dejudder,fps=30000/1001,fieldmatch,yadif=0:-1:1,decimate"
     end if
 
     dim fps
-    if not IsNull(m_slParam("Fps")) Then
+    if HasParam("Fps") Then
       fps = "fps=" & m_slParam("Fps")
     else
       fps = "fps=" & m_objStream.FpsString
@@ -216,7 +217,7 @@ class FFmpeg
     
     dim crop
     crop =""
-    if not IsNull(m_slParam("Crop")) Then
+    if HasParam("Crop") Then
       Select Case m_slParam("Crop")
       Case "43" '4:3
         crop = "crop=in_w/4*3*1.0:in_h"
@@ -234,6 +235,27 @@ class FFmpeg
     GetFFVf = ret
   end Function
 
+  Private Function HasParam(key)
+    'オプションにパラメータが書かれているか？
+    dim val
+    val = m_slParam(key)
+    if Not HasValue(val) Then HasParam = False : Exit Function
+    if val = "" then HasParam = False : Exit Function
+    HasParam = True '何か書かれていれば True
+  End Function
+
+  Private Function IsTest()
+    'Testパラメータのチェック
+    dim val
+    val = m_slParam("Test")
+    if Not HasValue(val) Then IsTest = False : Exit Function
+    if val = "false" then IsTest = False : Exit Function
+    if val = "true" then IsTest = True :Exit Function
+    if val = "" then IsTest = True : Exit Function
+    IsTest = True
+  End Function
+
+
   Public Function GetFFcmd()
     dim cmd
     cmd = objFso.BuildPath( m_scriptFolder, "ffmpeg.exe")
@@ -242,7 +264,7 @@ class FFmpeg
     cmd = Join(Array( cmd, GetFFBsfa()))
     cmd = Join(Array( cmd, "-c:v libx264", "-pix_fmt yuv420p"))
     cmd = Join(Array( cmd, GetFFVf(), GetFFCrf(), GetFFGop(), GetFFTunePreset()))
-    cmd = Join(Array( cmd, "-i_qfactor 0.71","-weightb 1"))
+    'cmd = Join(Array( cmd, "-i_qfactor 0.71","-weightb 1"))
     cmd = Join(Array( cmd, "-movflags +faststart"))
     cmd = Join(Array( cmd, "-y", """" & GetOutFile() & """"))
     GetFFcmd = cmd
@@ -251,15 +273,15 @@ class FFmpeg
   Public Function DoFFcmd()
     dim cmd, ret
     cmd = GetFFcmd()
-    if not CBool(m_slParam("Test")) Then
-      'objWS.Popup cmd, 1, "Encording Start", 64
-      cmd = Join(Array("cmd.exe /c", "start", """" & m_baseName & """", "/BELOWNORMAL /B /W",cmd))
-      ret = runcmd(cmd)
-      DoFFcmd = ret
-    else
+    if IsTest()  Then
       copytoclipboard cmd
       Wscript.echo(cmd)
       DoFFcmd = 0
+    else
+      cmd = Join(Array("cmd.exe /c", "start", """" & m_baseName & """", "/BELOWNORMAL /B /W",cmd))
+      ret = runcmd(cmd)
+      DoFFcmd = ret
     end if
   End Function
+
 end class

@@ -35,9 +35,7 @@ End Function
 Function IsValue(val)
   dim ret
   ret = True
-  if IsNull(val) then ret = False
-  if IsObject(val) then ret = False
-  if IsEmpty(val) then ret = False
+  if IsNull(val) Or IsObject(val) Or IsEmpty(val) then ret = False
   IsValue = ret
 End Function
   

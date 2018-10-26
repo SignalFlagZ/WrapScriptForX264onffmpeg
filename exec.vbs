@@ -33,9 +33,11 @@ Function copytoclipboard(str)
 End Function
 
 Function HasValue(val)
-  if IsNull(val) then HasValue = False :Exit Function
-  'if IsEmpty(val) then HasValue = False : Exit Function
-  if IsObject(val) then HasValue = False : Exit Function
-  HasValue = True
+  dim ret
+  ret = True
+  if IsNull(val) then ret = False
+  if IsObject(val) then ret = False
+  if IsEmpty(val) then ret = False
+  HasValue = ret
 End Function
   

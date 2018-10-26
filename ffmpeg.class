@@ -39,7 +39,7 @@ class FFmpeg
     For i =0 To m_slParam.Count-1
       If args.Exists(m_slParam.GetKey(i)) Then
         ret = args(m_slParam.GetKey(i))
-        if IsNull(ret) then ret = ""
+        if IsEmpty(ret) then ret = "" 'コロンの後に何も書かないとEmptyになる
         SetParam(m_slParam.GetKey(i)) = ret
         'Wscript.echo m_slParam.GetKey(i), ", ",  m_slParam.GetByIndex(i)
       end if
@@ -237,22 +237,22 @@ class FFmpeg
 
   Private Function HasParam(key)
     'オプションにパラメータが書かれているか？
-    dim val
+    dim val,ret
+    ret = true
     val = m_slParam(key)
     if Not HasValue(val) Then HasParam = False : Exit Function
-    if val = "" then HasParam = False : Exit Function
-    HasParam = True '何か書かれていれば True
+    if val = "" then ret = False
+    HasParam = ret
   End Function
 
   Private Function IsTest()
     'Testパラメータのチェック
-    dim val
+    dim val, ret
+    ret = True
     val = m_slParam("Test")
     if Not HasValue(val) Then IsTest = False : Exit Function
-    if val = "false" then IsTest = False : Exit Function
-    if val = "true" then IsTest = True :Exit Function
-    if val = "" then IsTest = True : Exit Function
-    IsTest = True
+    if val = "false" then ret = False
+    IsTest = ret
   End Function
 
 

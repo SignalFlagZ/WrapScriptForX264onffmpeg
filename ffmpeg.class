@@ -203,18 +203,10 @@ class FFmpeg
 
     dim detelecine
     detelecine = ""
-    if ((not m_objStream.IsProgressive) and (GetParamValue("Fps") < 30)) or _
-         IsValue(m_slParam("Detelecine")) then
+    if IsValue(m_slParam("Detelecine")) then
       detelecine = "dejudder,fps=30000/1001,fieldmatch,yadif=0:-1:1,decimate"
     end if
 
-    dim fps
-    if HasParam("Fps") Then
-      fps = "fps=" & m_slParam("Fps")
-    else
-      fps = "fps=" & m_objStream.FpsString
-    end if
-    
     dim crop
     crop =""
     if HasParam("Crop") Then
@@ -226,7 +218,7 @@ class FFmpeg
       end Select
     end if
 
-    ret = Array(crop, deinterlace, detelecine, scale, fps)
+    ret = Array(crop, deinterlace, detelecine, scale)
     ret = Filter(ret, "=",true, vbTextCompare)
     ret = Join(ret, ",")
     if ret <> "" then
@@ -234,6 +226,16 @@ class FFmpeg
     end if
     GetFFVf = ret
   end Function
+
+  Private Function GetFFFps()
+    dim fps
+    if HasParam("Fps") Then
+      fps = "-r " & m_slParam("Fps")
+    else
+      fps = ""
+    end if
+    GetFFFps = fps
+  End Function
 
   Private Function HasParam(key)
     'オプションにパラメータが書かれているか？
@@ -263,7 +265,7 @@ class FFmpeg
     cmd = Join(Array( cmd, "-ignore_unknown", "-dn", "-map 0", "-c copy"))
     cmd = Join(Array( cmd, GetFFBsfa()))
     cmd = Join(Array( cmd, "-c:v libx264", "-pix_fmt yuv420p"))
-    cmd = Join(Array( cmd, GetFFVf(), GetFFCrf(), GetFFGop(), GetFFTunePreset()))
+    cmd = Join(Array( cmd, GetFFVf(), GetFFFps(),GetFFCrf(), GetFFGop(), GetFFTunePreset()))
     'cmd = Join(Array( cmd, "-i_qfactor 0.71","-weightb 1"))
     cmd = Join(Array( cmd, "-movflags +faststart"))
     cmd = Join(Array( cmd, "-y", """" & GetOutFile() & """"))

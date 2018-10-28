@@ -27,6 +27,7 @@ class FFmpeg
     m_slParam.Add "Crop", null
     m_slParam.Add "Detelecine", null
     m_slParam.Add "Bsfa", null
+    m_slParam.Add "Pixfmt", "yuv420p"
   end sub
   Private Sub class_terminate
     m_slParam.Clear
@@ -190,7 +191,7 @@ class FFmpeg
         dim outW
         outW = Round(CInt(m_slParam("Height")) * m_objStream.Dar / m_objStream.Sar )
         scale = "scale=" & outW & ":" & CInt(m_slParam("Height"))
-        scale = scale '& ":" & "flags=lanczos"
+        'scale = scale & ":" & "flags=lanczos"
       end if
     end if
 
@@ -237,6 +238,17 @@ class FFmpeg
     GetFFFps = fps
   End Function
 
+  Private Function GetFFPixfmt()
+    dim pixfmt
+    pixfmt = "-pix_fmt "
+    if HasParam("Pixfmt") Then
+      pixfmt = pixfmt & m_slParam("Pixfmt")
+    else
+      pixfmt = ""
+    end if
+    GetFFPixfmt = pixfmt
+  End Function
+
   Private Function HasParam(key)
     'オプションにパラメータが書かれているか？
     dim val,ret
@@ -264,7 +276,7 @@ class FFmpeg
     cmd = Join(Array( cmd, "-i", """" & m_filePath & """"))
     cmd = Join(Array( cmd, "-ignore_unknown", "-dn", "-map 0", "-c copy"))
     cmd = Join(Array( cmd, GetFFBsfa()))
-    cmd = Join(Array( cmd, "-c:v libx264", "-pix_fmt yuv420p"))
+    cmd = Join(Array( cmd, "-c:v libx264", GetFFPixfmt()))
     cmd = Join(Array( cmd, GetFFVf(), GetFFFps(),GetFFCrf(), GetFFGop(), GetFFTunePreset()))
     'cmd = Join(Array( cmd, "-i_qfactor 0.71","-weightb 1"))
     cmd = Join(Array( cmd, "-movflags +faststart"))

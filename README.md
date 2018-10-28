@@ -29,7 +29,7 @@ ffmpegでx264エンコードするためのVBScriptです。
 ### options
 | option | argument | description | default | example |
 |:---:|:---|:---|:---|:---|
-|/Test: |なし |ffmpegのコマンドラインを表示しクリップボードへコピーします。エンコードはしません。 |false |`/Test` |
+|/Test: |なし |エンコードせずエンコードコマンドを表示しクリップボードへコピー |false |`/Test` |
 |/Heigh: |なし |高さでリサイズ |入力と同じ |`/Height:720` |
 |/Gop: |数値 |gop長指定 |指定なし |`/Gop:48` |
 |/Crf: |数値 |crf値指定 |出力解像度より決定 |`/Crf:26` |
@@ -40,5 +40,6 @@ ffmpegでx264エンコードするためのVBScriptです。
 |/Ext: |文字列 |出力ファイルの拡張子　コンテナを決める |`mkv` |`/Ext:mp4` |
 |/Fps: |文字列 or 数値 |fps値指定 |入力と同じ |`/Fps:30` `/Fps:24000/1001` |
 |/Crop: |`43` or `43+` |4:3にクロップ `43+`はやや幅広  |クロップしない |`/Crop:43` `/Crop:43+` |
-|/Detelecine |なし |テレシネ解除を強制する  |インターレース時は自動で解除 |`/Detelecine` |
+|/Detelecine |なし |テレシネ解除を強制  |インターレース時は自動で解除 |`/Detelecine` |
 |/Bsfa: |文字列 |オーディオbitstream filter指定 |指定なし |`/Bsfa:aac_adtstoasc` |
+|/Pixfmt: |文字列 |pix_fmtの設定 |`yuv420p` |`/Pixfmt:yuv420p10le` |

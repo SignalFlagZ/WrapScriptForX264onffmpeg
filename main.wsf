@@ -17,6 +17,8 @@
       <named name="Crop" helpstring="4:3へクロップ '43' or '43+'" many="false" required="false" type="string"/>
       <named name="Detelecine" helpstring="テレシネ解除する" many="false" required="false" type="simple"/>
       <named name="Bsfa" helpstring="bitstream filter for audioを設定する" many="false" required="false" type="string"/>
+      <named name="Pixfmt" helpstring="-pix_fmtを設定する(yuv420p)" many="false" required="false" type="string"/>
+      "", ""
       <unnamed name="videofile" helpstring="エンコードするビデオファイルのパス" many="true" required="1" type="string"/>
       <example>Example: main.wsf video.mp4 /Fps:24000/1001</example>
     </runtime>
@@ -63,7 +65,7 @@
         objFFmpeg.SetParams args.named
 
         'パラメータ上書き
-        'objFFmpeg.SetParam("Test") = true
+        'objFFmpeg.SetParam("Test") = "true"
         
         objFFmpeg.FilePath = filepath '入力ファイルの指定
 

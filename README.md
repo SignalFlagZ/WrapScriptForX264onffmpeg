@@ -42,4 +42,5 @@ ffmpegでx264エンコードするためのVBScriptです。
 |/Crop: |`43` or `43+` |4:3にクロップ `43+`はやや幅広  |クロップしない |`/Crop:43` `/Crop:43+` |
 |/Detelecine |なし |テレシネ解除を強制  |インターレース時は自動で解除 |`/Detelecine` |
 |/Bsfa: |文字列 |オーディオbitstream filter指定 |指定なし |`/Bsfa:aac_adtstoasc` |
-|/Pixfmt: |文字列 |pix_fmtの設定 |`yuv420p` |`/Pixfmt:yuv420p10le` |
+|/Depth: |文字列 |`8`or`10` |`8` |`/Pixfmt` `/Pixfmt:10` |
+<!---|/Pixfmt: |文字列 |pix_fmtの設定 |`yuv420p` |`/Pixfmt:yuv420p10le` |--->

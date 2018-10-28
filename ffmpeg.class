@@ -27,7 +27,8 @@ class FFmpeg
     m_slParam.Add "Crop", null
     m_slParam.Add "Detelecine", null
     m_slParam.Add "Bsfa", null
-    m_slParam.Add "Pixfmt", "yuv420p"
+    m_slParam.Add "Depth", "8"
+    'm_slParam.Add "Pixfmt", "yuv420p"
   end sub
   Private Sub class_terminate
     m_slParam.Clear
@@ -238,16 +239,32 @@ class FFmpeg
     GetFFFps = fps
   End Function
 
-  Private Function GetFFPixfmt()
+  Private Function GetFFDepth()
     dim pixfmt
     pixfmt = "-pix_fmt "
-    if HasParam("Pixfmt") Then
-      pixfmt = pixfmt & m_slParam("Pixfmt")
+    if HasParam("Depth") Then
+      Select Case m_slParam("Depth")
+      Case "10"
+        pixfmt = pixfmt & "yuv420p10le"
+      Case Else
+        pixfmt = pixfmt & "yuv420p"
+      End Select
     else
       pixfmt = ""
     end if
-    GetFFPixfmt = pixfmt
+    GetFFDepth = pixfmt
   End Function
+
+  'Private Function GetFFPixfmt()
+  '  dim pixfmt
+  '  pixfmt = "-pix_fmt "
+  '  if HasParam("Pixfmt") Then
+  '    pixfmt = pixfmt & m_slParam("Pixfmt")
+  '  else
+  '    pixfmt = ""
+  '  end if
+  '  GetFFPixfmt = pixfmt
+  'End Function
 
   Private Function HasParam(key)
     'オプションにパラメータが書かれているか？
@@ -276,7 +293,7 @@ class FFmpeg
     cmd = Join(Array( cmd, "-i", """" & m_filePath & """"))
     cmd = Join(Array( cmd, "-ignore_unknown", "-dn", "-map 0", "-c copy"))
     cmd = Join(Array( cmd, GetFFBsfa()))
-    cmd = Join(Array( cmd, "-c:v libx264", GetFFPixfmt()))
+    cmd = Join(Array( cmd, "-c:v libx264", GetFFDepth()))
     cmd = Join(Array( cmd, GetFFVf(), GetFFFps(),GetFFCrf(), GetFFGop(), GetFFTunePreset()))
     'cmd = Join(Array( cmd, "-i_qfactor 0.71","-weightb 1"))
     cmd = Join(Array( cmd, "-movflags +faststart"))

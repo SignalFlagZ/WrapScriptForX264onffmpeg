@@ -291,6 +291,7 @@ class FFmpeg
     if quotation <> """" then quotation = "'"
     dim cmd
     cmd = objFso.BuildPath( m_scriptFolder, "ffmpeg.exe")
+    cmd = """" + cmd + """"
     cmd = Join(Array( cmd, "-i", quotation & m_filePath & quotation))
     cmd = Join(Array( cmd, "-ignore_unknown", "-dn", "-map 0", "-c copy"))
     cmd = Join(Array( cmd, GetFFBsfa()))
@@ -313,7 +314,6 @@ class FFmpeg
       cmd = GetFFcmd("""")
       'cmd = Replace(cmd, "", "", vbTextCompare)
       cmd = Join(Array("cmd.exe /c", "start", """" & m_baseName & """", "/BELOWNORMAL /B /W",cmd))
-      wscript.echo cmd
       ret = runcmd(cmd)
       DoFFcmd = ret
     end if

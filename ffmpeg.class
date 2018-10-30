@@ -224,7 +224,7 @@ class FFmpeg
     ret = Filter(ret, "=",true, vbTextCompare)
     ret = Join(ret, ",")
     if ret <> "" then
-      ret = "-filter_complex " & ret 
+      ret = "-filter_complex """ & ret & """"
     end if
     GetFFVf = ret
   end Function
@@ -287,11 +287,12 @@ class FFmpeg
   End Function
 
 
-  Public Function GetFFcmd(quotation)
-    if quotation <> """" then quotation = "'"
+  Public Function GetFFcmd()
+    dim quotation
+    quotation = """"
     dim cmd
     cmd = objFso.BuildPath( m_scriptFolder, "ffmpeg.exe")
-    cmd = """" + cmd + """"
+    cmd = quotation + cmd + quotation
     cmd = Join(Array( cmd, "-i", quotation & m_filePath & quotation))
     cmd = Join(Array( cmd, "-ignore_unknown", "-dn", "-map 0", "-c copy"))
     cmd = Join(Array( cmd, GetFFBsfa()))
@@ -306,13 +307,13 @@ class FFmpeg
   Public Function DoFFcmd()
     dim cmd, ret
     if IsTest()  Then
-      cmd = GetFFcmd("'")
+      cmd = GetFFcmd()
       WScript.Echo cmd
       copytoclipboard cmd
       DoFFcmd = 0
     else
-      cmd = GetFFcmd("""")
-      'cmd = Replace(cmd, "", "", vbTextCompare)
+      cmd = GetFFcmd()
+      'cmd = Replace(cmd, "'", "\'", vbTextCompare)
       cmd = Join(Array("cmd.exe /c", "start", """" & m_baseName & """", "/BELOWNORMAL /B /W",cmd))
       ret = runcmd(cmd)
       DoFFcmd = ret

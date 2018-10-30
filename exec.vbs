@@ -27,7 +27,7 @@ Function copytoclipboard(ByVal str)
   dim cmd
   str = Replace(str, "\", "\\", vbTextCompare)
   str = Replace(str, "'", "\'", vbTextCompare)
-  'str = Replace(str, """", """""", vbTextCompare)
+  str = Replace(str, """", "\x22", vbTextCompare)
   cmd = "mshta ""javascript:Code(close(clipboardData.setData('text','" & str & "')));"" "
   runcmd(cmd)
 End Function

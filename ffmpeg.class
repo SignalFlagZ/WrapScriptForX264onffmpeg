@@ -201,14 +201,13 @@ class FFmpeg
     dim deinterlace
     deinterlace = ""
     if (not m_objStream.IsProgressive)  then
-      'deinterlace = "kerndeint=thresh=10:map=0:order=0:sharp=0:twoway=0"
-      deinterlace = "yadif=0"
+      deinterlace = "bwdif=1"
     end if
 
     dim detelecine
     detelecine = ""
     if IsValue(m_slParam("Detelecine")) then
-      detelecine = "dejudder,fps=30000/1001,fieldmatch,yadif=0:-1:1,decimate"
+      detelecine = "dejudder,fps=30000/1001,fieldmatch=combmatch=sc,yadif=0:-1:1,decimate"
     end if
 
     dim crop

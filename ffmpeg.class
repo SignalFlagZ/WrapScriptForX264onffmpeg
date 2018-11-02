@@ -201,7 +201,8 @@ class FFmpeg
     dim deinterlace
     deinterlace = ""
     if (not m_objStream.IsProgressive)  then
-      deinterlace = "bwdif=mode=send_frame"
+      deinterlace = "bwdif=mode=send_field,mcdeint=parity=tff:mode=fast"
+      'if not IsValue(m_slParam("Detelecine")) then deinterlace = deinterlace & ",dejudder"
     end if
 
     dim detelecine

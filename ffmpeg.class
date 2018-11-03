@@ -28,6 +28,7 @@ class FFmpeg
     m_slParam.Add "Detelecine", null
     m_slParam.Add "Bsfa", null
     m_slParam.Add "Depth", "8"
+    m_slParam.Add "Deinterlace", null
     'm_slParam.Add "Pixfmt", "yuv420p"
   end sub
   Private Sub class_terminate
@@ -201,8 +202,11 @@ class FFmpeg
     dim deinterlace
     deinterlace = ""
     if (not m_objStream.IsProgressive)  then
-      deinterlace = "bwdif=mode=send_field,mcdeint=parity=tff:mode=fast"
-      'if not IsValue(m_slParam("Detelecine")) then deinterlace = deinterlace & ",dejudder"
+      if IsValue(m_slParam("Deinterlace")) Then
+        deinterlace = "bwdif=mode=send_field,mcdeint=parity=tff:mode=fast"
+      else
+        deinterlace = "bwdif=mode=send_frame"
+      end if
     end if
 
     dim detelecine

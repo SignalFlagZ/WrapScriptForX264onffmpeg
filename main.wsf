@@ -15,6 +15,7 @@
       <named name="B" helpstring="B値を設定する (-55.17605647)" many="false" required="false" type="string"/>
       <named name="Fps" helpstring="Fps値を設定する (auto)" many="false" required="false" type="string"/>
       <named name="Crop" helpstring="4:3へクロップ '43' or '43+'" many="false" required="false" type="string"/>
+      <named name="Deinterlace" helpstring="mcdeintを使用する (bwdifのみ)" many="false" required="false" type="string"/>
       <named name="Detelecine" helpstring="テレシネ解除する" many="false" required="false" type="simple"/>
       <named name="Bsfa" helpstring="bitstream filter for audioを設定する" many="false" required="false" type="string"/>
       <named name="Depth" helpstring="ビット深度を設定する '8' or '10' (`8`)" many="false" required="false" type="string"/>

@@ -38,13 +38,14 @@ class FFmpeg
     
   'エンコードパラメータ設定
   Public Sub SetParams(args)
-    dim i, ret
-    For i =0 To m_slParam.Count-1
-      If args.Exists(m_slParam.GetKey(i)) Then
-        ret = args(m_slParam.GetKey(i))
+    dim ret, arg
+    For Each arg in args
+      if m_slParam.ContainsKey(arg) then
+        ret = args.Item(arg)
         if IsEmpty(ret) then ret = "" 'コロンの後に何も書かないとEmptyになる
-        SetParam(m_slParam.GetKey(i)) = ret
-        'Wscript.echo m_slParam.GetKey(i), ", ",  m_slParam.GetByIndex(i)
+        SetParam(arg) = ret
+      else
+        objWS.Popup arg & " : Unknown Param.", 2, "Warning", 48
       end if
     next
   End Sub

@@ -15,7 +15,7 @@ ffmpegでx264エンコードするためのVBScriptです。
 
 出力映像の縦解像度を指定できます。  
 `16：9`映像を`4:3`へクロップできます。
-音声は再エンコードせずそのままコピーします。
+音声は再エンコードせずそのままコピーします。mpeg tsの時はビットストリームフィルタaac_adtstoascを使います。
 
 ## 使い方
 [Blog Signal Flag Z](https://signal-flag-z.blogspot.com/2018/10/ffmpeg-libx264-VBScript.html)
@@ -42,6 +42,6 @@ ffmpegでx264エンコードするためのVBScriptです。
 |/Crop: |`43` or `43+` |4:3にクロップ `43+`はやや幅広  |クロップしない |`/Crop:43` `/Crop:43+` |
 |/Detelecine |なし |テレシネ解除を強制  |インターレース時は自動で解除 |`/Detelecine` |
 |/Deinterlace |なし |インターレース解除に`mcdeint`を使用  |インターレース時は`bwdif`で解除 |`/Deinterlace` |
-|/Bsfa: |文字列 |オーディオbitstream filter指定 |指定なし |`/Bsfa:aac_adtstoasc` |
 |/Depth: |文字列 |`8`or`10` |`8` |`/Depth` `/Depth:10` |
+<!---|/Bsfa: |文字列 |オーディオbitstream filter指定 |指定なし |`/Bsfa:aac_adtstoasc` |--->
 <!---|/Pixfmt: |文字列 |pix_fmtの設定 |`yuv420p` |`/Pixfmt:yuv420p10le` |--->

@@ -20,7 +20,7 @@ ffmpegでx264エンコードするためのVBScriptです。
 ## 使い方
 [Blog Signal Flag Z](https://signal-flag-z.blogspot.com/2018/10/ffmpeg-libx264-VBScript.html)
 ~~~
-    main.wsf [/Test:] [/Height:value] [/Gop:value] [/Crf:value] [/Tune:string] [/Preset:string] [/A:value] [/B:value] [/Ext:string] [/Fps:string] [/Crop:{43, 43+}] [/Detelecine:] [/Bsfa:string] arg1 [arg2 arg3 ...] 
+    main.wsf [/Test:] [/Height:value] [/Gop:value] [/Crf:value] [/Tune:string] [/Preset:string] [/A:value] [/B:value] [/Ext:string] [/Fps:string] [/Crop:{43, 43+}] [/Detelecine] [/Deinterlace] [/Bsfa:string] [/Depth:{8, 10}] arg1 [arg2 arg3 ...] 
 ~~~
 スクリプトと同じフォルダに`ffmpeg`と`ffprobe`を置いてください。
 `main.wsf`にファイルをD&Dします。`main.wsf`のショートカットを作成し、リンク先を`cscript.exe main.wsf /Height:720`等としておくと便利です。
@@ -41,6 +41,7 @@ ffmpegでx264エンコードするためのVBScriptです。
 |/Fps: |文字列 or 数値 |fps値指定 |入力と同じ |`/Fps:30` `/Fps:24000/1001` |
 |/Crop: |`43` or `43+` |4:3にクロップ `43+`はやや幅広  |クロップしない |`/Crop:43` `/Crop:43+` |
 |/Detelecine |なし |テレシネ解除を強制  |インターレース時は自動で解除 |`/Detelecine` |
+|/Deinterlace |なし |インターレース解除に`mcdeint`を使用  |インターレース時は`bwdif`で解除 |`/Deinterlace` |
 |/Bsfa: |文字列 |オーディオbitstream filter指定 |指定なし |`/Bsfa:aac_adtstoasc` |
 |/Depth: |文字列 |`8`or`10` |`8` |`/Depth` `/Depth:10` |
 <!---|/Pixfmt: |文字列 |pix_fmtの設定 |`yuv420p` |`/Pixfmt:yuv420p10le` |--->

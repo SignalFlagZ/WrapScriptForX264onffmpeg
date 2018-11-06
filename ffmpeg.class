@@ -38,12 +38,13 @@ class FFmpeg
     
   'エンコードパラメータ設定
   Public Sub SetParams(args)
-    dim ret, arg
+    dim ret, arg, cap
     For Each arg in args
-      if m_slParam.ContainsKey(arg) then
-        ret = args.Item(arg)
+      cap = UCase(Left(arg, 1)) & LCase(Mid(arg, 2)) '先頭文字だけを大文字に
+      if m_slParam.ContainsKey(cap) then
+        ret = args.Item(cap)
         if IsEmpty(ret) then ret = "" 'コロンの後に何も書かないとEmptyになる
-        SetParam(arg) = ret
+        SetParam(cap) = ret
       else
         objWS.Popup arg & " : Unknown Param.", 2, "Warning", 48
       end if

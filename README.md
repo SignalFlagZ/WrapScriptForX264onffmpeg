@@ -30,7 +30,7 @@ ffmpegでx264エンコードするためのVBScriptです。
 | option | argument | description | default | example |
 |:---:|:---|:---|:---|:---|
 |/Test: |なし |エンコードせずエンコードコマンドを表示しクリップボードへコピー |false |`/Test` |
-|/Heigh: |なし |高さでリサイズ |入力と同じ |`/Height:720` |
+|/Heigh: |なし |高さでリサイズ |指定なし |`/Height:720` |
 |/Gop: |数値 |gop長指定 |指定なし |`/Gop:48` |
 |/Crf: |数値 |crf値指定 |出力解像度より決定 |`/Crf:26` |
 |/Tune: |文字列 |tuneパラメータ |指定なし |`/Tune:Film` |
@@ -39,8 +39,8 @@ ffmpegでx264エンコードするためのVBScriptです。
 |/B: |数値 |b値 |`-55.17605647` |`/B:-54` |
 |/Ext: |文字列 |出力ファイルの拡張子　コンテナを決める |`mkv` |`/Ext:mp4` |
 |/Fps: |文字列 or 数値 |fps値指定 |入力と同じ |`/Fps:30` `/Fps:24000/1001` |
-|/Crop: |`43` or `43+` |4:3にクロップ `43+`はやや幅広  |クロップしない |`/Crop:43` `/Crop:43+` |
-|/Detelecine |なし |テレシネ解除を強制  |インターレース時は自動で解除 |`/Detelecine` |
+|/Crop: |`43` or `43+` |4:3にクロップ `43+`はやや幅広  |指定なし |`/Crop:43` `/Crop:43+` |
+|/Detelecine |なし |テレシネ解除を強制  |指定なし |`/Detelecine` |
 |/Deinterlace |なし |インターレース解除に`mcdeint`を使用  |インターレース時は`bwdif`で解除 |`/Deinterlace` |
 |/Depth: |文字列 |`8`or`10` ビット深度指定 |`8` |`/Depth` `/Depth:10` |
 <!---|/Bsfa: |文字列 |オーディオbitstream filter指定 |指定なし |`/Bsfa:aac_adtstoasc` |--->

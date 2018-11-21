@@ -1,0 +1,77 @@
+<package>
+  <job id="default">
+    <script language="vbscript" src="stream.class"/>
+    <script language="vbscript" src="ffmpeg.class"/>
+    <script language="vbscript" src="exec.vbs"/>
+    <runtime>
+      <description>ffmpegでx264エンコードをします。main.wsfと同じフォルダにffmpeg.exeとffprobe.exeを置いてください。</description>
+      <named name="Test" helpstring="エンコードせずffmpegのコマンドを表示しクリップボードへコピーする" many="false" required="false" type="simple"/>
+      <named name="Height" helpstring="出力の縦解像度を設定する(same as input)" many="false" required="false" type="string"/>
+      <named name="Gop" helpstring="gop長を設定する" many="false" required="false" type="string"/>
+      <named name="Tune" helpstring="tune設定をする" many="false" required="false" type="string"/>
+      <named name="Preset" helpstring="preset設定をする (medium)" many="false" required="false" type="string"/>
+      <named name="Crf" helpstring="Crf値を設定する (auto)" many="false" required="false" type="string"/>
+      <named name="A" helpstring="A値を設定する (12.85097209)" many="false" required="false" type="string"/>
+      <named name="B" helpstring="B値を設定する (-55.17605647)" many="false" required="false" type="string"/>
+      <named name="Fps" helpstring="Fps値を設定する (auto)" many="false" required="false" type="string"/>
+      <named name="Crop" helpstring="4:3へクロップ '43' or '43+'" many="false" required="false" type="string"/>
+      <named name="Deinterlace" helpstring="mcdeintを使用する (bwdifのみ)" many="false" required="false" type="string"/>
+      <named name="Detelecine" helpstring="テレシネ解除する" many="false" required="false" type="simple"/>
+      <named name="Depth" helpstring="ビット深度を設定する '8' or '10' (8)" many="false" required="false" type="string"/>
+      <!--- <named name="Pixfmt" helpstring="-pix_fmtを設定する(yuv420p)" many="false" required="false" type="string"/> -->
+      <unnamed name="videofile" helpstring="エンコードするビデオファイルのパス" many="true" required="1" type="string"/>
+      <example>Example: main.wsf video.mp4 /Fps:24000/1001</example>
+    </runtime>
+    <script language="vbscript">
+      Private objFso, objWS, regEx, ret
+      Set objFso = CreateObject("Scripting.FileSystemObject")
+      Set objWS = WScript.CreateObject("WScript.Shell")
+      Set regEx = New RegExp
+      '引数チェック
+      dim args, arg
+      Set args = WScript.Arguments
+      If Args.Unnamed.Count < 1 Then
+        'help
+        WScript.Arguments.ShowUsage
+        Set objFso = Nothing
+        set objWS = Nothing
+        WScript.Quit
+      End If
+
+      '引数処理
+      For Each arg In args.Unnamed
+        If objFso.FileExists(arg) Then
+          ret = mainwork(arg)  'ファイル処理へ
+        Else
+          objWS.Popup arg & ": file not found.", 1, "Warning", 48
+          ret = 1
+        End If
+        '中断確認
+        if ret <> 0 then
+          ret = objWS.Popup("中止しますか？", 5, "Warning", 4 + 16)
+          if ret = 6 then Exit For
+        end if
+      Next
+
+      set objFso=Nothing
+      set objSLffParams=Nothing
+      objWS.Popup "END", 1
+      WScript.Quit
+      '終了
+
+      function mainwork(filepath)
+        dim objStream, objFFmpeg, ret
+        Set objFFmpeg = New FFmpeg
+        objFFmpeg.SetParams args.named
+
+        'パラメータ上書き
+        'objFFmpeg.SetParam("Test") = "true"
+        
+        objFFmpeg.FilePath = filepath '入力ファイルの指定
+
+        ret = objFFmpeg.DoFFcmd 'encoding
+        mainwork = ret
+      end function
+    </script>
+  </job>
+</package>

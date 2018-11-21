@@ -1,0 +1,138 @@
+Option Explicit
+
+class VideoStream
+  private m_width, m_height, m_sar, m_dar, m_fps, m_strSar, m_strDar, m_strFps, m_strFO, m_strFmt
+  private m_filePath
+
+  private stream
+  private objFso, objWS, regEx, ret
+
+  Private Sub Class_Initialize
+    m_filePath = null
+    m_width = null
+    m_height = null
+    m_strSar = null
+    m_strDar = null
+    m_strFps = null
+    Set objFso = CreateObject("Scripting.FileSystemObject")
+    Set objWS = WScript.CreateObject("WScript.Shell")
+    Set regEx = New RegExp
+  end sub
+  Private Sub class_terminate
+    Set objFso=nothing
+    Set objWS=nothing
+  End Sub
+
+  'メディアファイルの指定
+  Public Property Let FilePath(path)
+    If objFso.FileExists(path) Then
+      m_filePath = path
+      Get_Stream()
+    Else
+      objWS.Popup path & ": file not found.", 3
+    End If  
+  end Property
+
+  Public Property Get FilePath()
+    FilePath = m_filePath
+  end Property
+
+  Public Property Get Width()
+    Width = m_width
+  end Property
+
+  Public Property Get Height()
+    Height = m_height
+  end Property
+
+  Public Property Get Sar()
+    Sar = round(m_sar,3)
+  end Property
+
+  Public Property Get Dar()
+    Dar = round(m_dar,3)
+  end Property
+
+  Public Property Get Fps()
+    Fps = round(m_fps,3)
+  end Property
+
+  Public Property Get SarString()
+    SarString = m_strSar
+  end Property
+
+  Public Property Get DarString()
+    DarString = m_strDar
+  end Property
+
+  Public Property Get FpsString()
+    FpsString = m_strFps
+  end Property
+
+  Public Property Get FieldOrder()
+    FieldOrder = m_strFO
+  end Property
+
+  Public Property Get FormatName()
+    FormatName = m_strFmt
+  end Property
+    
+  Public Property Get IsProgressive()
+    if m_strFO = "progressive" then
+      IsProgressive = True
+    else
+      IsProgressive = False
+    end if
+  end Property
+
+  Private Sub Get_Stream()
+    if IsNull(filePath) then
+      objWS.Popup arg & ": file not found.", 3, "Warning", 48
+    else
+      'stream情報取得
+      dim ffCmd, strCmd, scriptFolder
+      scriptFolder = objFso.getParentFolderName(WScript.ScriptFullName)
+      ffCmd = "ffprobe -v error -select_streams v:0 -show_entries format=format_name:streams """ & filePath & """"
+      strCmd = scriptFolder & "\" & ffCmd
+      stream = execcmd( strCmd)
+      
+      regEx.Pattern = "width=(\d+)"
+      set ret = regEx.Execute(stream)
+      m_width = CInt(ret(0).SubMatches(0))
+
+      regEx.Pattern = "height=(\d+)"
+      set ret = regEx.Execute(stream)
+      m_height = CInt(ret(0).SubMatches(0))
+
+      regEx.Pattern = "sample_aspect_ratio=(\d+:\d+)"
+      set ret = regEx.Execute(stream)
+      m_strSar = ret(0).SubMatches(0)
+      regEx.Pattern = "sample_aspect_ratio=(\d+):(\d+)"
+      set ret = regEx.Execute(stream)
+      m_sar = CInt(ret(0).SubMatches(0))/Cint(ret(0).SubMatches(1))
+
+      regEx.Pattern = "display_aspect_ratio=(\d+:\d+)"
+      set ret = regEx.Execute(stream)
+      m_strDar = ret(0).SubMatches(0)
+      regEx.Pattern = "display_aspect_ratio=(\d+):(\d+)"
+      set ret = regEx.Execute(stream)
+      m_dar = CInt(ret(0).SubMatches(0))/Cint(ret(0).SubMatches(1))
+
+      regEx.Pattern = "avg_frame_rate=(\d+/\d+)"
+      set ret = regEx.Execute(stream)
+      m_strFps = ret(0).SubMatches(0)
+      regEx.Pattern = "avg_frame_rate=(\d+)/(\d+)"
+      set ret = regEx.Execute(stream)
+      m_Fps = CInt(ret(0).SubMatches(0))/Cint(ret(0).SubMatches(1))
+    
+      regEx.Pattern = "field_order=(\w+)"
+      set ret = regEx.Execute(stream)
+      m_strFO = ret(0).SubMatches(0)
+
+      regEx.Pattern = "format_name=(\w+)"
+      set ret = regEx.Execute(stream)
+      m_strFmt = ret(0).SubMatches(0)
+
+    end if
+  end sub
+end class

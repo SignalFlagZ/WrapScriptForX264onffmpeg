@@ -29,6 +29,7 @@ class FFmpeg
     'm_slParam.Add "Bsfa", null
     m_slParam.Add "Depth", "8"
     m_slParam.Add "Deinterlace", null
+    m_slParam.Add "Muxqueuesize", null
     'm_slParam.Add "Pixfmt", "yuv420p"
   end sub
   Private Sub class_terminate
@@ -263,6 +264,12 @@ class FFmpeg
     GetFFDepth = pixfmt
   End Function
 
+  Private Function GetMuxQueueSize()
+    GetMuxQueueSize = ""
+    if HasParam("Muxqueuesize") Then
+      GetMuxQueueSize = "-max_muxing_queue_size " + m_slParam("Muxqueuesize")
+    end if
+  End Function
   'Private Function GetFFPixfmt()
   '  dim pixfmt
   '  pixfmt = "-pix_fmt "
@@ -310,7 +317,7 @@ class FFmpeg
     cmd = Join(Array( cmd, "-c:v libx264", GetFFDepth()))
     cmd = Join(Array( cmd, GetFFVf(), GetFFFps(),GetFFCrf(), GetFFGop(), GetFFTunePreset()))
     'cmd = Join(Array( cmd, "-i_qfactor 0.71","-weightb 1"))
-    cmd = Join(Array( cmd, "-movflags +faststart"))
+    cmd = Join(Array( cmd, "-movflags +faststart", GetMuxQueueSize()))
     cmd = Join(Array( cmd, "-y", quotation & GetOutFile() & quotation))
     GetFFcmd = cmd
   End Function

@@ -43,5 +43,6 @@ ffmpegでx264エンコードするためのVBScriptです。
 |/Detelecine |なし |テレシネ解除を強制  |指定なし |`/Detelecine` |
 |/Deinterlace |なし |インターレース解除に`mcdeint`を使用  |インターレース時は`bwdif`で解除 |`/Deinterlace` |
 |/Depth: |文字列 |`8`or`10` ビット深度指定 |`8` |`/Depth` `/Depth:10` |
+|/Muxqueuesize: |数値 |max_muxing_queue_sizeパラメータ |指定なし |`/Muxqueuesize:1024` |
 <!---|/Bsfa: |文字列 |オーディオbitstream filter指定 |指定なし |`/Bsfa:aac_adtstoasc` |--->
 <!---|/Pixfmt: |文字列 |pix_fmtの設定 |`yuv420p` |`/Pixfmt:yuv420p10le` |--->

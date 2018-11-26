@@ -18,6 +18,7 @@
       <named name="Deinterlace" helpstring="mcdeintを使用する (bwdifのみ)" many="false" required="false" type="string"/>
       <named name="Detelecine" helpstring="テレシネ解除する" many="false" required="false" type="simple"/>
       <named name="Depth" helpstring="ビット深度を設定する '8' or '10' (8)" many="false" required="false" type="string"/>
+      <named name="Muxqueuesize" helpstring="max_muxing_queue_sizeを指定" many="false" required="false" type="string"/>
       <!--- <named name="Pixfmt" helpstring="-pix_fmtを設定する(yuv420p)" many="false" required="false" type="string"/> -->
       <unnamed name="videofile" helpstring="エンコードするビデオファイルのパス" many="true" required="1" type="string"/>
       <example>Example: main.wsf video.mp4 /Fps:24000/1001</example>

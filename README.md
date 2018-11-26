@@ -20,7 +20,7 @@ ffmpegでx264エンコードするためのVBScriptです。
 ## 使い方
 [Blog Signal Flag Z](https://signal-flag-z.blogspot.com/2018/10/ffmpeg-libx264-VBScript.html)
 ~~~
-    main.wsf [/Test:] [/Height:value] [/Gop:value] [/Crf:value] [/Tune:string] [/Preset:string] [/A:value] [/B:value] [/Ext:string] [/Fps:string] [/Crop:{43, 43+}] [/Detelecine] [/Deinterlace] [/Depth:{8, 10}] arg1 [arg2 arg3 ...] 
+    main.wsf [/Test] [/Height:value] [/Gop:value] [/Tune:value] [/Preset:value] [/Crf:value] [/A:value] [/B:value] [/Fps:value] [/Crop:value] [/Deinterlace:value] [/Detelecine] [/Depth:value] [/Muxqueuesize:value] videofile1 [videofile2...]
 ~~~
 スクリプトと同じフォルダに`ffmpeg`と`ffprobe`を置いてください。
 `main.wsf`にファイルをD&Dします。`main.wsf`のショートカットを作成し、リンク先を`cscript.exe main.wsf /Height:720`等としておくと便利です。
